@@ -1,6 +1,3 @@
-Parse.initialize("xCZ9CjBE7pET5Kcw8NIDwzxVWWrEajv0SvIn4YkG", "lr9xhaLct15MDncuWLHJhJimEgTtCf9nbIY9RY8q");
-var User = Parse.Object.extend("User");
-
 $(function(){
 
 		$("#email-collect").on("submit", function(e) {
@@ -9,40 +6,70 @@ $(function(){
 		  pushEmail($(this));
 		});;
 
-		$("#suggestEvent").click(function(){
-			ga('send', 'event', 'eventSuggestion', 'homePageEventSuggestion', 'Proposer un évènement|bg=white,color:orange');
-		});
+		//$("#suggestEvent").click(function(){
+		//	ga('send', 'event', 'eventSuggestion', 'homePageEventSuggestion', 'Proposer un évènement|bg=white,color:orange');
+		//});
 });
 
 function pushEmail(form){
 		var email = $("#email").prop("value");
-		//console.log($("#email").prop("value"));
 
-		var user = new User();
+		$.ajax({
+				type:"POST",
+				url: "https://bouger.us8.list-manage.com/subscribe/post-json?u=eae7f8d4e1c20125d910a2549&amp;id=733f7cd62b&c=?",
+				data : $.param({EMAIL : email}),
+				cache:false,
+				dataType: 'json',
+				contentType: 'application/json; charset=utf-8',
+				error : function(data){
+						$.growl.error({title: "rendezvous.cg",  message: "Veillez saisir une adresse email correcte ou réessayez plus tard." });
+						$("#email-collect ul").removeClass("bouncing-ball");
+				},
+				success : function(data) {
 
-		user.set("email", email);
-		user.set("username", email);
-		user.set("password", email);
-		user.set("welcomed", false);
+						if(data.result === "success") {
+								$.growl.notice({title: "rendezvous.cg",  message: "Vous êtes bien enregistré. A très bientôt !", duration : 5000});
+								$("#email-collect ul").removeClass("bouncing-ball");
+						}
+						else {
+								$.growl.error({title: "rendezvous.cg",  message: "Veillez saisir une adresse email correcte ou réessayez plus tard." });
+								$("#email-collect ul").removeClass("bouncing-ball");
+						}
+						//$.growl.notice({title: "rendezvous.cg",  message: "Vous êtes bien enregistré. A très bientôt !", duration : 5000});
+						/*
+						var data = JSON.parse(data);
 
-		user.save(null, {
-      success: function(user) {
-		  $("#email-collect ul").removeClass("bouncing-ball");
-		  $.growl.notice({title: "rendezvous.ci",  message: "Vous êtes bien enregistré. A très bientôt !", duration : 5000});
-      $('body,html').animate({scrollTop: $('#facebook').offset().top}, 'slow');
-			ga('send', 'event', 'emailSubscription', 'homePageEmailSubscriptionButton', 'Tenez-moi informé(e)');
-    },
-      error: function(user, response) {
+						if(data.indexOf("Subscription Confirmed") !== -1)
+						{
+								console.log(data);
+								$("#email-collect ul").removeClass("bouncing-ball");
+								$.growl.notice({title: "rendezvous.cg",  message: "Vous êtes bien enregistré. A très bientôt !", duration : 5000});
+						} 
+						else 
+						{
+								console.log(data);
+								$.growl.error({title: "rendezvous.cg",  message: "Veillez saisir une adresse email correcte ou réessayez plus tard." });
+						} */
+				}
+
+
+		});
+
+		/*
+		$.ajax({
+		  type: "POST",
+			url: "/members",
+			data: {"email_address": email,"status":"subscribed"},
+			success: function(data) {
+				console.log(data);
 		    $("#email-collect ul").removeClass("bouncing-ball");
-				console.log(response);
-		    if(response.code === 202)
-				{
-		      $.growl.notice({title: "rendezvous.ci",  message: "Vous êtes bien enregistré. A très bientôt !" });
-          $('body,html').animate({scrollTop: $('#facebook').offset().top}, 'slow');
-				}
-        else
-				{
-		      $.growl.error({title: "rendezvous.ci",  message: "Veillez saisir une adresse email correcte ou réessayez plus tard." });
-				}
-    }}); 
+				$.growl.notice({title: "rendezvous.cg",  message: "Vous êtes bien enregistré. A très bientôt !", duration : 5000});
+			},
+			error: function(data) {
+				console.log(data);
+				$.growl.error({title: "rendezvous.cg",  message: "Veillez saisir une adresse email correcte ou réessayez plus tard." });
+			},
+			dataType: 'text',
+		});
+		*/
 }
